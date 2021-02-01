@@ -1,37 +1,78 @@
-const app = require('express')();
-const fs = require('fs');
-const hls = require('hls-server');
+// const app = require('express')();
+// const fs = require('fs');
+// const hls = require('hls-server');
+// const cors = require('cors');
 
-app.get('/', (req, res) => {
-    return res.status(200).sendFile(`${__dirname}/client.html`);
-});
+// app.use(function (req, res, next) {
+//     res.header('Access-Control-Allow-Origin', '*');
+//     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+//     next();
+//   });
+// app.use(cors());
 
-const server = app.listen(3000);
+// app.get('/', (req, res) => {
+//     return res.status(200).sendFile(`${__dirname}/client.html`);
+// });
 
-new hls(server, {
-    provider: {
-        exists: (req, cb) => {
-            const ext = req.url.split('.').pop();
+// const server = app.listen(4000);
 
-            if (ext !== 'm3u8' && ext !== 'ts') {
-                return cb(null, true);
+// new hls(server, {
+//     provider: {
+//         exists: (req, cb) => {
+//             const ext = req.url.split('.').pop();
+//             console.log(__dirname + req.url)
+
+//             if (ext !== 'm3u8' && ext !== 'ts') {
+//                 return cb(null, true);
+//             }
+            
+//             fs.access(__dirname + req.url, fs.constants.F_OK, function (err) {
+//                 if (err) {
+//                     console.log('File not exist');
+//                     return cb(null, false);
+//                 }
+//                 cb(null, true);
+//             });
+//         },
+//         getManifestStream: (req, cb) => {
+//             const stream = fs.createReadStream(__dirname + req.url);
+//             cb(null, stream);
+//         },
+//         getSegmentStream: (req, cb) => {
+//             const stream = fs.createReadStream(__dirname + req.url);
+//             cb(null, stream);
+//         }
+//     }
+// });
+
+var http = require('http');
+var fs = require('fs');
+
+const port = 4000
+
+http.createServer(function (request, response) {
+    var filePath = '.' + request.url;
+    // var filePath = 'videos/output.m3u8'
+
+    fs.readFile(filePath, function(error, content) {
+        response.writeHead(200, { 'Access-Control-Allow-Origin': '*' });
+        console.log(filePath)
+        if (error) {
+            if(error.code == 'ENOENT'){
+                fs.readFile('./404.html', function(error, content) {
+                    response.end(content, 'utf-8');
+                });
             }
-
-            fs.access(__dirname + req.url, fs.constants.F_OK, function (err) {
-                if (err) {
-                    console.log('File not exist');
-                    return cb(null, false);
-                }
-                cb(null, true);
-            });
-        },
-        getManifestStream: (req, cb) => {
-            const stream = fs.createReadStream(__dirname + req.url);
-            cb(null, stream);
-        },
-        getSegmentStream: (req, cb) => {
-            const stream = fs.createReadStream(__dirname + req.url);
-            cb(null, stream);
+            else {
+                response.writeHead(500);
+                response.end('Sorry, check with the site admin for error: '+error.code+' ..\n');
+                response.end(); 
+            }
         }
-    }
-});
+        else {
+            response.end(content, 'utf-8');
+        }
+    });
+
+}).listen(port);
+console.log(`Server running at http://127.0.0.1:${port}/`);
