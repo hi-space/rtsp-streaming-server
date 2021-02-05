@@ -45,12 +45,17 @@
 //     }
 // });
 
-var http = require('http');
+var https = require('https')
 var fs = require('fs');
 
 const port = 4000
+const options = {
+    hostname: 'yoo.hispace.kr',
+    key: fs.readFileSync('/etc/letsencrypt/live/hispace.kr/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/hispace.kr/cert.pem')
+}
 
-http.createServer(function (request, response) {
+https.createServer(options, function (request, response) {
     var filePath = '.' + request.url;
     // var filePath = 'videos/output.m3u8'
 
