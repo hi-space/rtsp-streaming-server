@@ -1,0 +1,14 @@
+{
+  "name": "ewha-streaming-server",
+  "version": "1.0.0",
+  "description": "RTSP to HLS API server",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon ./bin/www"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "fluent-ffmpeg": "^2.1.2",
+    "nodemon": "^2.0.6"
+  }
+}
