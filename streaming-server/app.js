@@ -1,6 +1,7 @@
-var express = require('express');
-var fs = require('fs');
+var express = require('express')
+var fs = require('fs')
 var https = require('https')
+var bodyParser = require('body-parser');
 
 const port = 4000
 // const options = {
@@ -14,40 +15,42 @@ const options = {
     cert: fs.readFileSync('D://share/cert1.pem'),
 }
 
-var app = express();
+var app = express()
+app.use(bodyParser.json());
 
-const httpsServer = https.createServer(options, app);
+const httpsServer = https.createServer(options, app)
 httpsServer.listen(port, () => {
-    var host = httpsServer.address().address;
-    var port = httpsServer.address().port;
+    var host = httpsServer.address().address
+    var port = httpsServer.address().port
     
-    console.log('Streaming Server is working : host - ', host);
-    console.log('Streaming Server is working : PORT - ', port);
+    console.log(`Streaming Server is working : ${host}:${port}`)
 })
 
+app.use('/', require('./routes'))
+
 app.use(function (request, response) {
-    var filePath = '.' + request.url;
+    console.log('@@@@@@@')
+    var filePath = '.' + request.url
     // var filePath = 'videos/output.m3u8'
 
     fs.readFile(filePath, function(error, content) {
-        response.writeHead(200, { 'Access-Control-Allow-Origin': '*' });
+        response.writeHead(200, { 'Access-Control-Allow-Origin': '*' })
         console.log(filePath)
         if (error) {
             if(error.code == 'ENOENT'){
                 fs.readFile('./404.html', function(error, content) {
-                    response.end(content, 'utf-8');
+                    response.end(content, 'utf-8')
                 });
             }
             else {
-                response.writeHead(500);
-                response.end('Sorry, check with the site admin for error: '+error.code+' ..\n');
-                response.end(); 
+                response.writeHead(500)
+                response.end()
             }
         }
         else {
-            response.end(content, 'utf-8');
+            response.end(content, 'utf-8')
         }
-    });
+    })
 })
 
-module.exports = app;
+module.exports = app
