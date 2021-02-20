@@ -20,8 +20,7 @@ router.post('/stream/:cctv_id', async function(req, res) {
 
     if (cctvId in ffmpegDict) {
         console.log("already started staream. kill them.")
-        const killProcess = ffmpegDict[cctvId]
-        killProcess.kill()
+        ffmpegDict[cctvId].kill()
         delete ffmpegDict[cctvId]
     }
 
@@ -41,10 +40,10 @@ router.post('/stream/:cctv_id', async function(req, res) {
         ]).on('start', function (commandLine) {
             console.log('FFmpeg with command: ' + commandLine)
         }).on('codecData', function (data) {
-            res.status(200).send({ id : cctvId, url : `${ROOT_PATH}/${cctvId}.m3u8`})
+            res.status(200).send({ id : cctvId, url : `${ROOT_PATH}/${cctvId}/${cctvId}.m3u8`})
         }).on('error', function (err) {
             console.log(err)
-        }).saveToFile(`${ROOT_PATH}/${cctvId}/output.m3u8`)
+        }).saveToFile(`${ROOT_PATH}/${cctvId}/${cctvId}.m3u8`)
     
         ffmpegDict[cctvId] = ffmpegId
     } catch (err) {
@@ -59,8 +58,7 @@ router.delete('/stream/:cctv_id', async function(req, res) {
 
     try {
         if (cctvId in ffmpegDict) {
-            const killProcess = ffmpegDict[cctvId]
-            killProcess.kill()
+            ffmpegDict[cctvId].kill()
             fs.rmdirSync(ROOT_PATH + cctvId, { recursive: true })
             delete ffmpegDict[cctvId]
         }

@@ -29,9 +29,7 @@ httpsServer.listen(port, () => {
 app.use('/', require('./routes'))
 
 app.use(function (request, response) {
-    console.log('@@@@@@@')
     var filePath = '.' + request.url
-    // var filePath = 'videos/output.m3u8'
 
     fs.readFile(filePath, function(error, content) {
         response.writeHead(200, { 'Access-Control-Allow-Origin': '*' })
