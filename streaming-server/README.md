@@ -22,3 +22,25 @@ ffmpeg -fflags nobuffer \
  -segment_list_type m3u8 \
  videos/stream-%S.ts
 ```
+
+```sh
+ffmpeg -fflags nobuffer \
+ -rtsp_transport tcp \
+ -i rtsp://id:pwd@ip \
+ -vsync 0 \
+ -copyts \
+ -vcodec copy \
+ -movflags frag_keyframe+empty_moov \
+ -an \
+ -hls_flags delete_segments+append_list \
+ -f segment \
+ -strftime 1 \
+ -segment_list_flags live \
+ -segment_time 1 \
+ -segment_wrap 50 \
+ -segment_list_size 3 \
+ -segment_format mpegts \
+ -segment_list videos/output.m3u8 \
+ -segment_list_type m3u8 \
+ videos/stream-%d.ts
+```
