@@ -39,12 +39,13 @@ app.use(function (request, response) {
                 response.end(content, 'utf-8')
             } else {
                 console.log(error)
-                response.writeHead(500)
+                // response.writeHead(500)
                 response.end()
             }
         })
     } catch (err) {
-        console.log(err)
+        // response.writeHead(500)
+        response.end()
     }
 })
 
