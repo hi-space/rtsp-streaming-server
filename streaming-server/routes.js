@@ -27,6 +27,7 @@ router.post('/stream/:cctv_id', async function(req, res) {
     try {
         const ffmpegId = new ffmpeg(rtspUrl).addOptions([
             '-fflags nobuffer',
+            '-vf scale=640x480',
             '-vsync 0',
             '-copyts',
             '-vcodec libx264',
