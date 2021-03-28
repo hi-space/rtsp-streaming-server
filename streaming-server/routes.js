@@ -21,21 +21,20 @@ router.post('/stream/:cctv_id', async function(req, res) {
     if (cctvId in ffmpegDict) {
         console.log("already started staream. kill them.")
         ffmpegDict[cctvId].kill()
+        fs.rmdirSync(ROOT_PATH + cctvId, { recursive: true })
         delete ffmpegDict[cctvId]
     }
 
     try {
         const ffmpegId = new ffmpeg(rtspUrl).addOptions([
             '-fflags nobuffer',
-            '-vf scale=640x480',
             '-vsync 0',
             '-copyts',
-            '-vcodec libx264',
             '-hls_flags delete_segments+append_list+omit_endlist',
             '-hls_playlist_type event',
             '-hls_time 1',
-            '-hls_list_size 3',
-            '-hls_wrap 10',
+            '-hls_list_size 1',
+            '-hls_wrap 1',
         ]).inputOptions([
             '-rtsp_transport tcp'
         ]).on('start', function (commandLine) {
