@@ -48,6 +48,7 @@ ffmpeg -fflags nobuffer \
 ffmpeg -fflags nobuffer \
  -rtsp_transport tcp \
  -i rtsp://id:pwd@ip \
+ -vf scale=640x480 \
  -vsync 0 \
  -copyts \
  -vcodec libx264 \
