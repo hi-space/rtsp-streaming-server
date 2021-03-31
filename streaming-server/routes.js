@@ -32,7 +32,7 @@ router.post('/stream/:cctv_id', async function(req, res) {
             '-copyts',
             '-vcodec copy',
             '-movflags frag_keyframe+empty_moov',            
-            '-hls_flags delete_segments+aappend_list',
+            '-hls_flags delete_segments+append_list',
             '-f segment',
             '-segment_list_flags live',
             '-segment_time 1',
