@@ -30,11 +30,17 @@ router.post('/stream/:cctv_id', async function(req, res) {
             '-fflags nobuffer',
             '-vsync 0',
             '-copyts',
-            '-hls_flags delete_segments+append_list+omit_endlist',
-            '-hls_playlist_type event',
-            '-hls_time 1',
-            '-hls_list_size 1',
-            '-hls_wrap 1',
+            '-vcodec copy',
+            '-movflags frag_keyframe+empty_moov',            
+            '-hls_flags delete_segments+aappend_list',
+            '-f segment',
+            '-segment_list_flags live',
+            '-segment_time 1',
+            '-segment_wrap 10',
+            '-segment_list_size 3',
+            '-segment_format mpegts',
+            `-segment_list ${ROOT_PATH}/${cctvId}/${cctvId}.m3u8`,
+            '-segment_list_type m3u8',
         ]).inputOptions([
             '-rtsp_transport tcp'
         ]).on('start', function (commandLine) {
@@ -43,7 +49,7 @@ router.post('/stream/:cctv_id', async function(req, res) {
             res.status(200).send({ id : cctvId, url : `${ROOT_PATH}/${cctvId}/${cctvId}.m3u8`})
         }).on('error', function (err) {
             console.log(err)
-        }).saveToFile(`${ROOT_PATH}/${cctvId}/${cctvId}.m3u8`)
+        }).saveToFile(`${ROOT_PATH}/${cctvId}/stream-%d.ts`)
     
         ffmpegDict[cctvId] = ffmpegId
     } catch (err) {
